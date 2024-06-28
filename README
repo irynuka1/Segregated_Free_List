@@ -1,0 +1,135 @@
+Nume: Coitu Sebastian-Teodor
+Grupa: 314CA
+
+  # Segregated free list - Tema 1
+
+    /* DESCRIERE */
+
+    * Pentru a realiza task-urile cerute voi retine blocurile libere intr-un
+    vector de liste ("heap"), iar pe cele alocate intr-o lista separata
+    ("allocated_list") si voi folosi patru structuri:
+    - "block_t" - Structura care va retine informatiile despre un bloc de date
+                  (un pointer de tip void catre "info_t", un pointer catre
+                  urmatorul bloc si un pointer catre blocul anterior);
+
+    - "info_t" - Structura care va retine informatiile dintr-un bloc
+                 (adresa si dimensiunea blocului si un sir de caractere);
+
+    - "dll_list_t" - Structura care va retine informatiile despre o lista de
+                     blocuri (un pointer catre primul bloc, un pointer catre
+                     ultimul bloc, numarul de bloc-uri din lista si dimen-
+                     siunea unui bloc);
+                   - Retin "tail" doar din motive de eficienta, pentru a nu
+                     parcurge toata lista de fiecare data cand adaug un element
+                     pe ultima pozitie;
+
+    - "heap_t" - Structura care va retine informatiile despre heap si va
+                 contine un pointer catre vectorul de liste (adresa de inceput,
+                 numarul de liste din heap, numarul maxim de liste ce pot fi
+                 alocate si dimensiunea fiecarei liste);
+               - "max_no_lists" este folosit pentru a sti cand trebuie sa
+                 realoc memorie pentru vectorul de liste;
+
+    * Inainte de implementarea functiilor principale, sunt definite functii
+    pentru adaugare a unui bloc intr-o lista ("dll_add_nth_node" si
+    "dll_add_allocated_node") si o functie pentru eliminarea unui bloc dintr-o
+    lista ("dll_remove_nth_node"). A doua funtie de add este folosita cand
+    am nevoie sa adaug un bloc intreg din heap in allocated_list. Functia
+    "init_list" initalizeaza campurile unei liste de blocuri.
+
+    * Functia "sort_array" sorteaza vectorul de liste in functie de dimensiunea
+    blocurilor din fiecare lista. 
+    * Functia "get_add_pos" returneaza pozitia la care trebuie adaugat un bloc
+    intr-o lista in functie de adresa blocului pentru a pastra lista ordonata.
+    * Functia "realloc_heap" realoca memorie pentru vectorul de liste, dubland
+    dimensiunea acestuia in momentul in care se atinge numarul maxim de liste
+    ce pot fi alocate.
+
+    - "init_heap" - Aloca memorie pentru un heap si initializeaza campurile
+                    acestuia, apoi aloca memorie pentru vectorul de liste si
+                    creeaza listele din vector, atribuind fiecarui bloc o
+                    o adresa unica si dimensiunea corespunzatoare. Returneaza
+                    un pointer catre heap;
+
+    - "heap_malloc" - Scoate un bloc de dimnesiunea ceruta din heap si il adauga
+                      in lista de blocuri alocate daca exista destula memorie
+                      libera. Returneaza un pointer catre blocul alocat;
+
+                      1. Cazul in care se gaseste un bloc liber de dimensiunea
+                      ceruta: se scoate blocul din lista de blocuri libere si
+                      se muta in lista de blocuri alocate;
+
+                      2. Cazul in care nu se gaseste un bloc liber de dimen-
+                      siunea ceruta: se cauta in vectorul de liste un bloc cu
+                      dimensiunea mai mare sau egala cu dimensiunea ceruta si
+                      se fragmenteaza; Se retin dimnesiunea si adresa blocului
+                      initial, se scoate din lista de blocuri libere si se
+                      elibereaza memoria, apoi se creeaza doua blocuri noi
+                      cu datele corespunzatoare. Primul bloc este adaugat in
+                      "allocated_list" si al doilea in "heap" (se creeaza o
+                      lista noua daca nu exista una cu dimensiunea
+                      corespunzatoare).
+
+    - "free_allocated_block" - Cauta blocul cu adresa data in "allocated_list"
+                               si il adauga in "heap" la pozitia corecta in
+                               functie de adresa pentru a pastra heap-ul
+                               ordonat. Daca nu exista o lista cu dimensiunea
+                               corespunzatoare, se creeaza una noua. Daca
+                               blocul nu exista in "allocated_list", se
+                               afiseaza mesajul de eroare corespunzator. Este
+                               tratat si cazul in care adresa data este 0x0.
+
+    - "dump_memory" - Afiseaza toate informatiile cerute, apeland functiile
+                      "free_blocks_print" si "allocated_blocks_print" pentru
+                      afisarile corespunzatoare. Numarul de malloc-uri, de
+                      fragmetari si de free-uri este incrementat la fiecare
+                      realiazare a operatiei respective (acestea sunt
+                      initializate cu 0 in "main").
+
+    - "destroy_heap" - Elibereaza memoria alocata pentru heap si pentru
+                       "allocated_list".
+
+    - "write" - Scrie un string in "allocated_list" la adresa data. Mai intai
+                se verifica daca exista un bloc alocat la adresa data si daca
+                daca exista o zona de memorie contigua suficient de mare. In
+                caz afirmativ, se scrie string-ul incepand de la adresa data,
+                caracter cu caracter. Daca nu exista un bloc alocat la adresa
+                respectiva sau daca nu exista suficienta memorie contigua,
+                se afiseaza mesajul de eroare corespunzator, iar programul se
+                incheie dupa eliberarea memoriei.
+
+    - "read" - Citeste un string de la adresa data din "allocated_list". Mai
+               intai se verifica daca exista un bloc alocat la adresa data si
+               daca exista suficienta memorie contigua pentru citirea unui
+               string. In caz afirmativ, se citeste string-ul incepand de la
+               adresa data, caracter cu caracter. Daca nu exista un bloc alocat
+               la adresa respectiva sau daca nu exista suficienta memorie
+               contigua, se afiseaza mesajul de eroare corespunzator, iar
+               programul se incheie dupa eliberarea memoriei.
+
+    /* FEEDBACK */
+
+    * Pe parcursul realizarii temei am avut diverse implementari ale unor
+    functii, aducand mereu imbunatatiri care impactau performanta programului
+    sau claritatea codului (de exemplu, in loc sa sortez o lista dupa ce adaug
+    un bloc in ea, am ales sa adaug blocul la pozitia corecta in lista, astfel
+    ajungand de la peste 3s de executie a testului 29, la 0.20s). Evident
+    ca mereu exista loc de imbunatatiri, insa sunt multumit de ce am reusit sa
+    realizez.
+
+    * Pe parcursul acestei teme consider ca mi-am pus bazele pentru a intelege
+    mai bine conceptele de lucru cu memorie si cu liste. De asemenea, mi-am
+    imbunatatit semnificativ abilitatile de debugging si de analiza a codului
+    scris, deoarece am fost nevoit sa analizez fiecare functie in parte pentru
+    a intelege unde se afla erorile si cum pot fi rezolvate.
+
+    * La fel ca la PCLP1, enuntul nu a fost destul de clar in unele locuri,
+    inclusiv unele imagini de pe ocw aratau altceva decat ce trebuia
+    implementat. Din aceasta cauza multe persoane pierd timp incercand sa
+    compare ".out" cu ".ref" si sa inteleaga ce trebuie implementat de fapt.
+    Un alt exemplu ar fi structurile generice, despre care se vorbeste in
+    enunt un singur rand, fara a se oferi exemple sau detalii despre cum
+    ar trebui implementate (si totusi reprezinta 20p din nota finala a temei).
+    Nu voi sta sa enumar toate problemele, insa consider ca daca se asteapta
+    anumite rezultate de la studenti, ar trebui sa se acorde mai multa atentie
+    acestor aspecte in viitor.

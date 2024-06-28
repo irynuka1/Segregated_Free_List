@@ -1,0 +1,15 @@
+==3395== Memcheck, a memory error detector
+==3395== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==3395== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==3395== Command: /home/irynuka1/Desktop/UNI/SDA/Tema1/sfl
+==3395== Parent PID: 3394
+==3395== 
+==3395== 
+==3395== HEAP SUMMARY:
+==3395==     in use at exit: 0 bytes in 0 blocks
+==3395==   total heap usage: 14 allocs, 14 frees, 8,440 bytes allocated
+==3395== 
+==3395== All heap blocks were freed -- no leaks are possible
+==3395== 
+==3395== For lists of detected and suppressed errors, rerun with: -s
+==3395== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
